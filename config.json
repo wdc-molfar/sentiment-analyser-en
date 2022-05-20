@@ -1,0 +1,9 @@
+{"langModels" : [
+   	{"en" : "en.ftz"}
+	],
+
+"minTextLength" : "3",
+"maxTextLength" : "2000",
+"predictLimit" : "0.9"
+
+}

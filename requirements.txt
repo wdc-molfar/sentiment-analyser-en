@@ -1,0 +1,2 @@
+fastText==9.0.2
+jsons==1.6.1

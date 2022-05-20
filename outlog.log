@@ -1,0 +1,6 @@
+Loading <en.ftz> quantized model ...
+
+/Users/dmytrenko.o/Documents/GitHub/MOLFAR/sentiment-analyser-en/models/en.ftz
+Warning : `load_model` does not return WordVectorModel or SupervisedModel any more, but a `FastText` object which is very similar.
+<<fasttext.FastText._FastText object at 0x7fc7f019a970>> quantized model successfully loaded!
+
