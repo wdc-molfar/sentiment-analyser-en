@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 -W ignore::DeprecationWarning
+
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu May 12 18:43:37 2022
@@ -11,22 +13,15 @@ import io
 import sys, os
 import warnings
 import traceback
+import fasttext
 
+stdOutput = open("outlog.log", "w")
+sys.stderr = stdOutput
+sys.stdout = stdOutput
 
-#stdOutput = open("outlog.log", "w")
-#sys.stderr = stdOutput
-#sys.stdout = stdOutput
+#load model
+model = fasttext.load_model(os.path.join(os.getcwd()+'/models/en.ftz'))
 
-#from __modules__ import packagesInstaller
-#packages = ['os', 'fasttext', 'time']
-#packagesInstaller.setup_packeges(packages)
-
-from __modules__ import configLoader, modelsLoader, sentimentAnalyser
-
-#load languages by default
-langModels = configLoader.load_default_languages(os.getcwd())
-#load models by default
-models = modelsLoader.load_models(os.getcwd(), langModels)
 sys.stdout = sys.__stdout__
 sys.stderr = sys.__stdout__
 
@@ -43,7 +38,6 @@ if __name__=='__main__':
         try:
             output = input_json.copy()
             text = input_json["service"]["scraper"]["message"]["text"]
-            lang = input_json["service"]["scraper"]["message"]["lang"]
         except BaseException as ex:
             ex_type, ex_value, ex_traceback = sys.exc_info()            
 
@@ -52,21 +46,28 @@ if __name__=='__main__':
             output['error'] += "Exception message : %s\n" %ex_value
             output['error'] += "Exception traceback : %s\n" %"".join(traceback.TracebackException.from_exception(ex).format())
         
-        if lang in langModels:
-            try:
-                prediction = sentimentAnalyser.predict_emotion(text, models[lang], configLoader.default_value(os.getcwd(), "predictLimit"))
-                
-                output["service"]["sentimentanalyser"] = str(prediction)
-            except BaseException as ex:
-                 ex_type, ex_value, ex_traceback = sys.exc_info()            
-                 
-                 output = {"error": ''}           
-                 output['error'] += "Exception type : %s; \n" % ex_type.__name__
-                 output['error'] += "Exception message : %s\n" %ex_value
-                 output['error'] += "Exception traceback : %s\n" %"".join(traceback.TracebackException.from_exception(ex).format())
-             
-            
-            output_json = json.dumps(output, ensure_ascii=False).encode('utf-8')
-            sys.stdout.buffer.write(output_json)
-            print ()
+        try:
+            predict = model.predict(text, k = 2)
+            if (predict[0][0] == '__label__pos') and (predict[1][0] >= 0.9):
+                emotion = "Good"
+            elif (predict[0][0] == '__label__neg') and (predict[1][0] >= 0.9):
+                emotion = "Bad"
+            else:
+                emotion = "None"
+            prediction = dict()
+            prediction["pos"] = float(predict[1][0])
+            prediction["neg"] = float(predict[1][1])
+            prediction["em"] = emotion
+            output["service"]["sentimentanalyser"] = str(prediction)
+        except BaseException as ex:
+             ex_type, ex_value, ex_traceback = sys.exc_info()            
+                       
+             output['error'] += "Exception type : %s; \n" % ex_type.__name__
+             output['error'] += "Exception message : %s\n" %ex_value
+             output['error'] += "Exception traceback : %s\n" %"".join(traceback.TracebackException.from_exception(ex).format())
+         
+        
+        output_json = json.dumps(output, ensure_ascii=False).encode('utf-8')
+        sys.stdout.buffer.write(output_json)
+        print ()
         
