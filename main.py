@@ -1,10 +1,7 @@
-#!/usr/bin/env python3 -W ignore::DeprecationWarning
-
+#!/usr/bin/env python3
 
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 12 18:43:37 2022
-
 @author: dmytrenko.o
 """
 
@@ -20,7 +17,7 @@ sys.stderr = stdOutput
 sys.stdout = stdOutput
 
 #load model
-model = fasttext.load_model(os.path.join(os.getcwd()+'/models/en.ftz'))
+model = fasttext.load_model(os.path.join(os.getcwd()+'/model.ftz'))
 
 sys.stdout = sys.__stdout__
 sys.stderr = sys.__stdout__
@@ -36,32 +33,26 @@ if __name__=='__main__':
         # read json from stdin
         input_json = json.loads(line)
         try:
-            output = input_json.copy()
             text = input_json["service"]["scraper"]["message"]["text"]
-        except BaseException as ex:
-            ex_type, ex_value, ex_traceback = sys.exc_info()            
-
-            output = {"error": ''}           
-            output['error'] += "Exception type : %s; \n" % ex_type.__name__
-            output['error'] += "Exception message : %s\n" %ex_value
-            output['error'] += "Exception traceback : %s\n" %"".join(traceback.TracebackException.from_exception(ex).format())
-        
-        try:
+            
             predict = model.predict(text, k = 2)
             if (predict[0][0] == '__label__pos') and (predict[1][0] >= 0.9):
-                emotion = "Good"
+                emotion = "positive"
             elif (predict[0][0] == '__label__neg') and (predict[1][0] >= 0.9):
-                emotion = "Bad"
+                emotion = "negative"
             else:
-                emotion = "None"
-            prediction = dict()
-            prediction["pos"] = float(predict[1][0])
-            prediction["neg"] = float(predict[1][1])
-            prediction["em"] = emotion
-            output["service"]["sentimentanalyser"] = str(prediction)
+                emotion = "unrecognised"
+            output = {
+                        "emotion": emotion,
+                        "classes": {
+                            "__label__pos": float(predict[1][0]),
+                            "__label__neg": float(predict[1][1])
+                        }
+                    }
         except BaseException as ex:
-             ex_type, ex_value, ex_traceback = sys.exc_info()            
-                       
+             ex_type, ex_value, ex_traceback = sys.exc_info()  
+             
+             output = {"error": ''}
              output['error'] += "Exception type : %s; \n" % ex_type.__name__
              output['error'] += "Exception message : %s\n" %ex_value
              output['error'] += "Exception traceback : %s\n" %"".join(traceback.TracebackException.from_exception(ex).format())
