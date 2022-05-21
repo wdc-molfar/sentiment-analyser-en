@@ -68,11 +68,11 @@ python --version Python 3.6.0
 ```
 
 пакети:
-- `fastText` [v9.0.2](https://github.com/facebookresearch/fastText)
+- `fastText` [v0.9.2](https://github.com/facebookresearch/fastText)
 - `json` [v1.6.1](https://github.com/facebookresearch/fastText)
 
 ```sh
-pip install fastText==9.0.2
+pip install fastText==0.9.2
 pip install jsons==1.6.1
 ```
 
