@@ -2,7 +2,9 @@
 
 **Модуль `sentiment-analyser-en` – "Програмний модуль виявлення емоційного забарвлення текстів інформаційних повідомлень поданих англійською мовою"**, який написаний мовою програмування `Python`, призначений для виявлення емоційного забарвлення текстів інформаційних повідомлень англійською мовою за допомогою навченої засобами [fastText](https://github.com/facebookresearch/fastText) моделі.
 
-Для побудови моделі сентимент-аналізу, яка застосовуються у програмному модулі [sentiment-analyser-en](https://github.com/wdc-molfar/sentiment-analyser-en), було використано функціонал бібліотеки [fastText](https://github.com/facebookresearch/fastText) мови програмування `Python`. Для навчання класифікатора [fastText](https://github.com/facebookresearch/fastText) спочатку була здійснена попередня обробка й формування навчального збалансованого набору даних у вигляді текстових файлів [en.txt](https://github.com/wdc-molfar/sentiment-datasets/tree/main/train), що містить в кожному рядку навчальне речення разом з міткою, що розпочинаються з префікса `__label__` (`__label__good` чи `__label__bad` для маркування речень позитивної чи негативної тональності відповідно). 
+Для побудови моделі сентимент-аналізу, яка застосовуються у програмному модулі [sentiment-analyser-en](https://github.com/wdc-molfar/sentiment-analyser-en), було використано функціонал бібліотеки [fastText](https://github.com/facebookresearch/fastText) мови програмування `Python`. Для навчання класифікатора [fastText](https://github.com/facebookresearch/fastText) спочатку була здійснена попередня обробка й формування навчального збалансованого набору даних у вигляді текстових файлів [en.txt](https://github.com/wdc-molfar/sentiment-datasets/tree/main/train), що містить в кожному рядку навчальне речення разом з міткою, що розпочинаються з префікса `__label__` (`__label__good` чи `__label__bad` для маркування речень позитивної чи негативної тональності відповідно).
+
+Більш детальний [опис](https://github.com/wdc-molfar/sentiment-datasets) тренувального набору текстових даних, призначеного для навчання моделі сентимент-аналізу текстів англійською мовою та сам [тренувальний](https://github.com/wdc-molfar/sentiment-datasets/tree/main/train) та [тестовий](https://github.com/wdc-molfar/sentiment-datasets/tree/main/test) набір англійських текстових інформаційних повідомлень позитивної та негативної тональності розміщений у репозиторії [**`sentiment-datasets`**](https://github.com/wdc-molfar/sentiment-datasets). 
 
 Далі було здійснено процес навчання засобами [fastText](https://github.com/facebookresearch/fastText) (функція `fastText.train_supervised()`). Для навчання моделі були налаштовані наступні гіперпараметри: 
 ``` python
@@ -17,7 +19,7 @@ hyper_params = {
 	"bucket": 2014846,  # Number of buckets
 	}
 ```
-Кількість циклів навчання – `100`, кількість слів у n-грамах – `3`, розмірність вектора моделі – `155`, розмір контекстного вікна – `5`, найменша допустима кількість символів в слові – `3`, найбільша – `20`. В результаті для тенувального набору даних [en.txt](https://github.com/wdc-molfar/sentiment-datasets/tree/main/train) була отримана навчена модель для сентимент-аналізу текстів інформаційних повідомлень англійською мовою, яка після процедури квантування була збережена у файлі формату `.ftz` - [en.ftz](https://drive.google.com/u/0/uc?id=12MLctdlgzqw_tMYizZOzzY1Ja8AYK2AH&export=download&confirm=t).
+Кількість циклів навчання – `100`, кількість слів у n-грамах – `3`, розмірність вектора моделі – `155`, розмір контекстного вікна – `5`, найменша допустима кількість символів в слові – `3`, найбільша – `20`. В результаті для тренувального набору даних [en.txt](https://github.com/wdc-molfar/sentiment-datasets/tree/main/train) була отримана навчена модель для сентимент-аналізу текстів інформаційних повідомлень поданих англійською мовою. 
 
 Для одержання стисненої квантованої моделі був використаний метод `quantize` функціоналу [fastText](https://github.com/facebookresearch/fastText) з наступними параметрами квантування:
 ``` python
@@ -34,7 +36,7 @@ model.quantize(
 	qnorm=False,
 	)
 ```
-Більш детальний [опис](https://github.com/wdc-molfar/sentiment-datasets) тренувального набору текстових даних, призначеного для навчання моделі сентимент-аналізу текстів англійською мовою та сам [тренувальний](https://github.com/wdc-molfar/sentiment-datasets/tree/main/train) та [тестовий](https://github.com/wdc-molfar/sentiment-datasets/tree/main/test) набір англійських текстових інформаційних повідомлень позитивної та негативної тональності розміщений у репозиторії [**`sentiment-datasets`**](https://github.com/wdc-molfar/sentiment-datasets).
+Після процедури квантування модель була збережена у файлі формату `.ftz` - [en.ftz](https://drive.google.com/u/0/uc?id=12MLctdlgzqw_tMYizZOzzY1Ja8AYK2AH&export=download&confirm=t).
 
 ### Зміст
 - [Позначення та найменування програмного модуля](#name)
