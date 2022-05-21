@@ -52,7 +52,7 @@ if __name__=='__main__':
             output['error'] += "Exception message : %s\n" %ex_value
             output['error'] += "Exception traceback : %s\n" %"".join(traceback.TracebackException.from_exception(ex).format())
         
-        if lang == "en":
+        if lang in langModels:
             try:
                 prediction = sentimentAnalyser.predict_emotion(text, models[lang], configLoader.default_value(os.getcwd(), "predictLimit"))
                 
